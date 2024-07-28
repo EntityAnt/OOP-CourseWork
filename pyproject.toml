@@ -7,7 +7,14 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+pytest = "^8.3.2"
 
+
+[tool.poetry.group.linters.dependencies]
+mypy = "^1.11.0"
+black = "^24.4.2"
+flake8 = "^7.1.0"
+isort = "^5.13.2"
 
 [build-system]
 requires = ["poetry-core"]
