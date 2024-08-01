@@ -1,52 +1,51 @@
 class Vacancy:
     """
-    Информация о вакансии
+    Класс для работы с вакансиями
     """
 
-    def __init__(self, vacancy_title, town, salary_from, salary_to, employment, url):
+    def __init__(self, vacancy_title: str, town: str, salary_from: float, salary_to: float, employment: str, url: str):
         self.vacancy_title: str = vacancy_title
         self.town: str = town
-        self.salary_from: int = salary_from
-        self.salary_to: int = salary_to
+        self.salary_from: float = salary_from
+        self.salary_to: float = salary_to
         self.employment: str = employment
         self.url: str = url
 
     def __str__(self):
-        return f'название вакансии: {self.vacancy_title}\n' \
-               f'город: {self.town}\n' \
-               f'зарплата от: {self.salary_from}\n' \
-               f'зарплата до: {self.salary_to}\n' \
-               f'тип занятости: {self.employment}\n' \
-               f'ссылка на вакансию: {self.url}\n'
+        return f'Название вакансии: {self.vacancy_title}\n' \
+               f'Город: {self.town}\n' \
+               f'Зарплата\nот: {self.salary_from}\nдо: {self.salary_to}\n' \
+               f'Тип занятости: {self.employment}\n' \
+               f'Ссылка на вакансию: {self.url}\n'
 
     def __eq__(self, other):
         if not isinstance(other, Vacancy):
-            raise TypeError("Вакансию можно сравнивать только с вакансией")
+            raise TypeError("Вакансию можно сравнивать только с вакансией!")
         return self.salary_from == other.salary_from
 
     def __ne__(self, other):
         if not isinstance(other, Vacancy):
-            raise TypeError("Вакансию можно сравнивать только с вакансией")
+            raise TypeError("Вакансию можно сравнивать только с вакансией!")
         return self.salary_from != other.salary_from
 
     def __lt__(self, other):
         if not isinstance(other, Vacancy):
-            raise TypeError("Вакансию можно сравнивать только с вакансией")
+            raise TypeError("Вакансию можно сравнивать только с вакансией!")
         return self.salary_from < other.salary_from
 
     def __gt__(self, other):
         if not isinstance(other, Vacancy):
-            raise TypeError("Вакансию можно сравнивать только с вакансией")
+            raise TypeError("Вакансию можно сравнивать только с вакансией!")
         return self.salary_from > other.salary_from
 
     def __le__(self, other):
         if not isinstance(other, Vacancy):
-            raise TypeError("Вакансию можно сравнивать только с вакансией")
+            raise TypeError("Вакансию можно сравнивать только с вакансией!")
         return self.salary_from <= other.salary_from
 
     def __ge__(self, other):
         if not isinstance(other, Vacancy):
-            raise TypeError("Вакансию можно сравнивать только с вакансией")
+            raise TypeError("Вакансию можно сравнивать только с вакансией!")
         return self.salary_from >= other.salary_from
 
     def to_dict(self):
