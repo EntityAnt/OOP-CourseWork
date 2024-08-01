@@ -1,37 +1,38 @@
-from abc import ABC, abstractmethod
-from pprint import pprint
-
 import requests
+from src.vacancy import Vacancy
+from src.abs_classes import GetVacancies
 
 
-class Parser(ABC):
-    @abstractmethod
-    def __init__(self, file_worker):
-        self.file_worker = file_worker
+class HH_API(GetVacancies):
+    """Класс для получения вакансий с HH.ru"""
+    def get_vacancies(self, name: str, pages: int = 5):
+        hh_list = []
 
+        for page in range(pages):
+            params = {
+                'text': name,
+                'per_page': '5',
+                'page': page
+            }
 
-class HH(Parser):
-    """
-    Класс для работы с API HeadHunter
-    """
+            response = requests.get('https://api.hh.ru/vacancies', params=params)
+            response_json = response.json()
 
-    def __init__(self, file_worker):
-        self.url = 'https://api.hh.ru/vacancies'
-        self.headers = {'User-Agent': 'HH-User-Agent'}
-        self.params = {'text': '', 'page': 0, 'per_page': 100}
-        self.vacancies = []
-        super().__init__(file_worker)
+            for vac in response_json['items']:
+                title = vac['name']
+                if not (vac['area'] is None):
+                    town = vac['area']['name']
+                else:
+                    town = None
+                if not ((vac['salary'] is None) or (vac['salary']['from'] is None)):
+                    salary_from = vac['salary']['from']
+                    salary_to = vac['salary']['to']
+                else:
+                    salary_from = 0
+                    salary_to = 0
+                employment = vac['employment']['name']
+                url = vac['alternate_url']
 
-    def load_vacancies(self, keyword):
-        self.params['text'] = keyword
-        while self.params.get('page') != 20:
-            response = requests.get(self.url, headers=self.headers, params=self.params)
-            vacancies = response.json()['items']
-            self.vacancies.extend(vacancies)
-            self.params['page'] += 1
-        return self.vacancies
-
-
-if __name__ == '__main__':
-    hh_api = HH('file_worker')
-    pprint(hh_api.load_vacancies('Python'))
+                vacancy = Vacancy(title, town, salary_from, salary_to, employment, url)
+                hh_list.append(vacancy)
+        return hh_list
