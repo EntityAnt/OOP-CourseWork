@@ -1,38 +1,63 @@
+from abc import ABC, abstractmethod
+
 import requests
 from src.vacancy import Vacancy
-from src.abs_classes import GetVacancies
 
 
-class HH_API(GetVacancies):
+class GetVacancies(ABC):
+    """Абстрактный класс для получения вакансий"""
+
+    @abstractmethod
+    def get_vacancies(self, name: str, pages: int):
+        pass
+
+
+class HH_Api(GetVacancies):
     """Класс для получения вакансий с HH.ru"""
-    def get_vacancies(self, name: str, pages: int = 5):
-        hh_list = []
-
-        for page in range(pages):
-            params = {
-                'text': name,
-                'per_page': '5',
-                'page': page
+    def __init__(self):
+        self.__base_url = 'https://api.hh.ru/vacancies'
+        self.__params = {
+                'text': '',
+                'per_page': '100',
+                'page': 0,
+                'area': 113
             }
 
-            response = requests.get('https://api.hh.ru/vacancies', params=params)
+    def get_vacancies(self, keyword: str, pages: int):
+        hh_list = []
+        for page in range(pages):
+            self.__params['text'] = keyword
+            self.__params['page'] = page
+
+            response = requests.get(self.__base_url, params=self.__params)
             response_json = response.json()
 
+
             for vac in response_json['items']:
-                title = vac['name']
-                if not (vac['area'] is None):
-                    town = vac['area']['name']
-                else:
-                    town = None
-                if not ((vac['salary'] is None) or (vac['salary']['from'] is None)):
-                    salary_from = vac['salary']['from']
-                    salary_to = vac['salary']['to']
+                vac_id = vac.get('id')
+                name = vac.get('name', '')
+                town = vac.get('area', '').get('name', '')
+
+                if vac['salary']:
+                    salary = vac['salary']
+                    currency = salary.get('currency', '')
+
+                    if salary['from']:
+                        salary_from = salary['from']
+                    else:
+                        salary_from = 0
+                    if salary['to']:
+                        salary_to = salary['to']
+                    else:
+                        salary_to = 0
+
                 else:
                     salary_from = 0
                     salary_to = 0
+
                 employment = vac['employment']['name']
                 url = vac['alternate_url']
 
-                vacancy = Vacancy(title, town, salary_from, salary_to, employment, url)
+                vacancy = Vacancy(vac_id, name, town, salary_from, salary_to, currency, employment, url)
                 hh_list.append(vacancy)
         return hh_list
