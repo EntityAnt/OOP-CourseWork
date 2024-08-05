@@ -15,7 +15,7 @@ class BaseSaver(ABC):
         pass
 
     @abstractmethod
-    def write_to_file(self):
+    def write_to_file(self, vacs: Vacancies):
         pass
 
     @abstractmethod
@@ -39,9 +39,12 @@ class JSONSaver(Vacancies, BaseSaver):
         if not os.path.isdir(DATA_DIR):
             os.makedirs(DATA_DIR)
 
-    def write_to_file(self):
+    def write_to_file(self, vacs: Vacancies):
         with open(self.__filepath, 'w', encoding='utf-8') as file:
-            json.dump(self.to_list_dict(), file, indent=4, ensure_ascii=False)
+            if isinstance(vacs, Vacancies):
+                json.dump(vacs.to_list_dict(), file, indent=4, ensure_ascii=False)
+            elif isinstance(vacs, list):
+                json.dump(vacs, file, indent=4, ensure_ascii=False)
 
     def read_from_file(self):
         with open(self.__filepath, 'r', encoding='UTF-8') as file:
