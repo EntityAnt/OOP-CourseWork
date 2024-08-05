@@ -6,9 +6,12 @@ from src.vacancy import Vacancy
 
 class GetVacancies(ABC):
     """Абстрактный класс для получения вакансий"""
+    @abstractmethod
+    def __init__(self):
+        pass
 
     @abstractmethod
-    def get_vacancies(self, name: str, pages: int):
+    def get_vacancies(self, keyword: str, pages: int):
         pass
 
 

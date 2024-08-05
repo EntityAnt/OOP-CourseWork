@@ -19,7 +19,7 @@ def user_interaction():
         print('Спасибо за использование программы!')
     else:
         jsonfile = JSONSaver('vacancies.json')
-        jsonfile.add_vacancies(from_hh)
+        jsonfile.add_vacancy(from_hh)
         jsonfile.sort_vacancies_by_salary()
-        jsonfile.file_write()
+        jsonfile.write_to_file()
         return jsonfile

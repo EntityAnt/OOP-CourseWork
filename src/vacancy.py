@@ -1,11 +1,43 @@
-class Vacancy:
-    """
-    Класс для работы с вакансиями
-    """
+from abc import ABC, abstractmethod
+
+
+class BaseVacancy(ABC):
+
+    """ Базовый класс для вакансии"""
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @abstractmethod
+    def __lt__(self, other):
+        pass
+
+
+class BaseVacancies(ABC):
+    """ Базовый класс для списка вакансий """
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def add_vacancy(self, new_vacancy):
+        pass
+
+    @abstractmethod
+    def delete_vacancy(self, vac_id: int):
+        pass
+
+
+class Vacancy(BaseVacancy):
+    """ Класс для работы с вакансиями """
 
     def __init__(self, vac_id: int, name: str, town: str, salary_from: float, salary_to: float, currency: str,
                  employment: str, url: str):
-        self.vac_id = vac_id
+        self.id = vac_id
         self.name: str = name
         self.town: str = town
         self.salary_from: float = salary_from
@@ -15,7 +47,7 @@ class Vacancy:
         self.url: str = url
 
     def __str__(self):
-        return f'ID: {self.vac_id}\n' \
+        return f'id: {self.id}\n' \
                f'Название вакансии: {self.name}\n' \
                f'Город: {self.town}\n' \
                f'Зарплата\nот: {self.salary_from} {self.currency}\nдо: {self.salary_to} {self.currency}\n' \
@@ -46,44 +78,36 @@ class Vacancy:
         """
         Возвращает вакансию в виде словаря
         """
-        # return {
-        #     'id': self.vac_id,
-        #     'name': self.name,
-        #     'town': self.town,
-        #     'salary_from': self.salary_from,
-        #     'salary_to': self.salary_to,
-        #     'currency': self.currency,
-        #     'employment': self.employment,
-        #     'url': self.url
-        # }
         return self.__dict__
 
     @staticmethod
-    def from_dict(vacancy_dict):
+    def to_list(vacancy_dict):
         """Возвращает вакансию в виде списка"""
         return Vacancy(
-            vacancy_dict['vac_id'],
+            vacancy_dict['id'],
             vacancy_dict['name'],
             vacancy_dict['town'],
             vacancy_dict['salary_from'],
             vacancy_dict['salary_to'],
+            vacancy_dict['currency'],
             vacancy_dict['employment'],
             vacancy_dict['url']
         )
 
 
-class Vacancies:
-    """Обработка списка вакансий"""
+class Vacancies(BaseVacancies):
+    """ Класс для работы со списком вакансий"""
 
     def __init__(self):
         self.__all_vacancies = []
 
-    def add_vacancies(self, new_vacancies):
-        self.__all_vacancies += new_vacancies
+    def add_vacancy(self, new_vacancy):
+        self.__all_vacancies += new_vacancy
 
-    def delete_vacancies(self, old_vacancies):
-        for i in old_vacancies:
-            self.__all_vacancies.remove(i)
+    def delete_vacancy(self, vac_id: int):
+        for vac in self.__all_vacancies:
+            if vac['id'] == vac_id:
+                self.__all_vacancies.remove(vac)
 
     def sort_vacancies_by_salary(self):
         self.__all_vacancies.sort(reverse=True)
@@ -93,7 +117,7 @@ class Vacancies:
         return self.__all_vacancies
 
     def to_list_dict(self):
-        a = []
-        for i in self.__all_vacancies:
-            a.append(i.to_dict())
-        return a
+        my_list = []
+        for vac in self.__all_vacancies:
+            my_list.append(vac.to_dict())
+        return my_list

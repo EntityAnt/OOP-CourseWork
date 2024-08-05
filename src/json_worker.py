@@ -10,16 +10,16 @@ class BaseSaver(ABC):
     """
     Базовый класс для записи и чтения полученных вакансий в файл json
     """
-
+    @abstractmethod
     def __init__(self):
         pass
 
     @abstractmethod
-    def file_write(self):
+    def write_to_file(self):
         pass
 
     @abstractmethod
-    def file_read(self):
+    def read_from_file(self):
         pass
 
 
@@ -39,13 +39,13 @@ class JSONSaver(Vacancies, BaseSaver):
         if not os.path.isdir(DATA_DIR):
             os.makedirs(DATA_DIR)
 
-    def file_write(self):
+    def write_to_file(self):
         with open(self.__filepath, 'w', encoding='utf-8') as file:
             json.dump(self.to_list_dict(), file, indent=4, ensure_ascii=False)
 
-    def file_read(self):
+    def read_from_file(self):
         with open(self.__filepath, 'r', encoding='UTF-8') as file:
             list_dict = json.load(file)
             self.__all_vacancies = []
             for i in list_dict:
-                self.all_vacancies.append(Vacancy.from_dict(i))
+                self.all_vacancies.append(Vacancy.to_list(i))
