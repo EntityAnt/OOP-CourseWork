@@ -23,7 +23,7 @@ class HH_Api(GetVacancies):
         self.__base_url = 'https://api.hh.ru/vacancies'
         self.__params = {
             'text': '',
-            'per_page': '100',
+            'per_page': '10',
             'page': 0,
             'area': 113
         }
@@ -44,7 +44,7 @@ class HH_Api(GetVacancies):
 
                 if vac['salary']:
                     salary = vac['salary']
-                    currency = salary.get('currency', '')
+                    currency = salary.get('currency')
 
                     if salary['from']:
                         salary_from = salary['from']
@@ -58,6 +58,7 @@ class HH_Api(GetVacancies):
                 else:
                     salary_from = 0
                     salary_to = 0
+                    currency = 'RUR'
 
                 employment = vac['employment']['name']
                 url = vac['alternate_url']

@@ -41,10 +41,11 @@ class JSONSaver(Vacancies, BaseSaver):
 
     def write_to_file(self, vacs: Vacancies):
         with open(self.__filepath, 'w', encoding='utf-8') as file:
-            if isinstance(vacs, Vacancies):
-                json.dump(vacs.to_list_dict(), file, indent=4, ensure_ascii=False)
-            elif isinstance(vacs, list):
-                json.dump(vacs, file, indent=4, ensure_ascii=False)
+            # if isinstance(vacs, Vacancies):
+            json.dump(vacs.to_list_dict(), file, indent=4, ensure_ascii=False)
+            # else:
+            #     print('Не удалось записать данные в файл')
+
 
     def read_from_file(self):
         with open(self.__filepath, 'r', encoding='UTF-8') as file:

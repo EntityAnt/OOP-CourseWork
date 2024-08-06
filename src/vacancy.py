@@ -104,7 +104,7 @@ class Vacancies(BaseVacancies):
         self.cursor = 0
 
     def __len__(self):
-        return len(self.__all_vacancies)
+        return len(self.all_vacancies)
 
     def __iter__(self):
         return self
@@ -117,22 +117,38 @@ class Vacancies(BaseVacancies):
             self.cursor += 1
             return result
 
-
     def get_top_n_vacancy(self, top_n: int):
-        top_n_vac: Vacancies()
-        res = sorted(self.__all_vacancies, reverse=True)
-        return res[:top_n]
+        if len(self.__all_vacancies) <= top_n:
+            return self.__all_vacancies
+        top_n_vacs = Vacancies()
+        self.sort_vacancies_by_salary()
+        for vac in self.__all_vacancies[:top_n]:
+            top_n_vacs.add_vacancy(vac)
+
+        return top_n_vacs
 
     def add_vacancy(self, new_vacancy):
-        self.__all_vacancies.append(new_vacancy)
+        if isinstance(new_vacancy, Vacancy):
+            self.__all_vacancies.append(new_vacancy)
+        else:
+            raise TypeError("Можно добавить только экземпляр класса Vacancy")
 
     def delete_vacancy(self, vac_id: int):
+        new_vacancies = Vacancies()
         for vac in self.__all_vacancies:
-            if vac['id'] == vac_id:
-                self.__all_vacancies.remove(vac)
+            v = vac.to_dict()['id']
+            if v.isdigit():
+                v = int(v)
+            if v != vac_id:
+                new_vacancies.add_vacancy(vac)
+        self.__all_vacancies = new_vacancies
+        self.cursor = 0
+        self.__iter__()
+        return self.__all_vacancies
 
     def sort_vacancies_by_salary(self):
-        self.__all_vacancies.sort(reverse=True)
+        self.__all_vacancies = sorted(self.__all_vacancies, reverse=True)
+
 
     @property
     def all_vacancies(self):
@@ -145,4 +161,21 @@ class Vacancies(BaseVacancies):
         return my_list
 
     def filtered_by_city(self, city: str):
-        return [vac for vac in self.__all_vacancies if vac['city'].lower == city]
+        self.cursor = 0
+        by_city = Vacancies()
+        for vac in self.__all_vacancies:
+            if vac.to_dict()['city'].lower() == city:
+                by_city.add_vacancy(vac)
+        self.__all_vacancies = by_city
+        return self.__all_vacancies
+
+
+    def filtered_by_salary(self, salary_from: int):
+        self.cursor = 0
+        by_salary = Vacancies()
+        for vac in self.__all_vacancies:
+            salary = vac.to_dict()['salary_from']
+            if isinstance(salary, int) and (salary >= salary_from):
+                by_salary.add_vacancy(vac)
+        self.__all_vacancies = by_salary
+        return self.__all_vacancies
