@@ -3,13 +3,12 @@ import os
 from abc import ABC, abstractmethod
 
 from config import DATA_DIR
-from src.vacancy import Vacancy, Vacancies
+from src.vacancy import Vacancies, Vacancy
 
 
 class BaseSaver(ABC):
-    """
-    Базовый класс для записи и чтения полученных вакансий в файл json
-    """
+    """Базовый класс для записи и чтения полученных вакансий в файл json"""
+
     @abstractmethod
     def __init__(self):
         pass
@@ -24,9 +23,7 @@ class BaseSaver(ABC):
 
 
 class JSONSaver(Vacancies, BaseSaver):
-    """
-    Запись и чтение json - файла
-    """
+    """Запись и чтение json - файла"""
 
     def __init__(self, filename: str):
         super().__init__()
@@ -35,21 +32,23 @@ class JSONSaver(Vacancies, BaseSaver):
         self.__filepath = os.path.join(DATA_DIR, self.__filename)
 
     @staticmethod
-    def __check_path_or_create():
+    def __check_path_or_create() -> None:
+        """Проверяет, существует ли папка, если нет то создает."""
         if not os.path.isdir(DATA_DIR):
             os.makedirs(DATA_DIR)
 
     def write_to_file(self, vacs: Vacancies):
-        with open(self.__filepath, 'w', encoding='utf-8') as file:
+        """Сохраняет список вакансий в json-файл."""
+        with open(self.__filepath, "w", encoding="utf-8") as file:
             # if isinstance(vacs, Vacancies):
             json.dump(vacs.to_list_dict(), file, indent=4, ensure_ascii=False)
             # else:
             #     print('Не удалось записать данные в файл')
 
-
     def read_from_file(self):
-        with open(self.__filepath, 'r', encoding='UTF-8') as file:
+        """Загружает список вакансий из json-файла."""
+        with open(self.__filepath, "r", encoding="UTF-8") as file:
             list_dict = json.load(file)
             self.__all_vacancies = []
-            for i in list_dict:
-                self.all_vacancies.append(Vacancy.to_list(i))
+            for vac in list_dict:
+                self.__all_vacancies.append(Vacancy.to_list(vac))
